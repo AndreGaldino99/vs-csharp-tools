@@ -65,7 +65,7 @@ async function AddPackageReference(uri: vscode.Uri) {
     const selectedPackage = await vscode.window.showQuickPick(
         nugetPackages.data.map(pkg => ({
             label: pkg.id,
-            description: pkg.version,
+            description: `Latest version ${pkg.version}`,
             detail: pkg.description,
             data: pkg,
         })),
@@ -79,16 +79,58 @@ async function AddPackageReference(uri: vscode.Uri) {
         return;
     }
 
-    const { id, version } = selectedPackage.data;
-    const cwd = path.dirname(currentCsprojPath);
-    const command = `dotnet add "${currentCsprojPath}" package ${id} --version ${version}`;
+    const { id } = selectedPackage.data;
 
-    try {
-        await installNugetPackage(command, cwd);
-        vscode.window.showInformationMessage(`Package "${id} ${version}" installed successfully.`);
-    } catch (error: any) {
-        vscode.window.showErrorMessage(`Error installing package: ${error.message}`);
+    
+    const versions = await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: `Fetching versions for "${id}"...`,
+            cancellable: false,
+        },
+        async (progress) => {
+            
+            progress.report({ increment: 0, message: "Loading versions..." });
+
+            const versionsResponse = await GetNugetPackages(id); 
+            return versionsResponse!.data.map(pkg => pkg.version);
+        }
+    );
+
+    if (versions.length === 0) {
+        vscode.window.showErrorMessage(`No versions found for package "${id}".`);
+        return;
     }
+
+    const selectedVersion = await vscode.window.showQuickPick(versions, {
+        placeHolder: `Select a version for package "${id}"`,
+    });
+
+    if (!selectedVersion) {
+        vscode.window.showErrorMessage("No version selected.");
+        return;
+    }
+
+    const cwd = path.dirname(currentCsprojPath);
+    const command = `dotnet add "${currentCsprojPath}" package ${id} --version ${selectedVersion}`;
+
+    await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: `Installing "${id} ${selectedVersion}"...`,
+            cancellable: false,
+        },
+        async (progress) => {
+            progress.report({ increment: 0, message: "Installing..." });
+            
+            try {
+                await installNugetPackage(command, cwd);
+                vscode.window.showInformationMessage(`Package "${id} ${selectedVersion}" installed successfully.`);
+            } catch (error: any) {
+                vscode.window.showErrorMessage(`Error installing package: ${error.message}`);
+            }
+        }
+    );
 }
 
 export { AddPackageReference };
