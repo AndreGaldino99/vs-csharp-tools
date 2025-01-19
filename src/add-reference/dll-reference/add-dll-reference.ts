@@ -3,95 +3,89 @@ import * as path from "path";
 import * as vscode from "vscode";
 
 async function AddDllReference(uri: vscode.Uri) {
-    const dllUris = await vscode.window.showOpenDialog({
-        canSelectFiles: true,
-        canSelectFolders: false,
-        filters: { "DLL Files": ["dll"] },
-        openLabel: "Selecione um ou mais arquivos DLL",
-        canSelectMany: true,
-      });
-    if (dllUris && dllUris.length > 0) {
-        const csprojPath = uri.fsPath;
-        const cwd = path.dirname(csprojPath);
+  const dllUris = await vscode.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    filters: { "DLL Files": ["dll"] },
+    openLabel: "Select one or more Dlls to add as reference",
+    canSelectMany: true,
+  });
 
-        fs.readFile(csprojPath, "utf8", (err, data) => {
-          if (err) {
-            vscode.window.showErrorMessage(
-              `Erro ao ler o arquivo .csproj: ${err.message}`
-            );
-            return;
-          }
+  if (dllUris && dllUris.length > 0) {
+    const csprojPath = uri.fsPath;
+    const cwd = path.dirname(csprojPath);
 
-          let updatedData = data;
-
-          dllUris.forEach((dllUri) => {
-            const selectedDll = dllUri.fsPath;
-            const relativeDllPath = path.relative(cwd, selectedDll);
-
-            if (data.includes(relativeDllPath)) {
-              vscode.window.showInformationMessage(
-                `A refer�ncia ${relativeDllPath} j� foi adicionada ao ${csprojPath}`
-              );
-              return;
-            }
-
-            const dllItemGroupMatch = updatedData.match(
-              /<ItemGroup>([\s\S]*?)<\/ItemGroup>/g
-            );
-
-            if (dllItemGroupMatch) {
-              const dllItemGroup = dllItemGroupMatch.find((itemGroup) =>
-                itemGroup.includes("<Reference")
-              );
-              if (dllItemGroup) {
-                const referenceXml = `
-		  <Reference Include="${path.basename(selectedDll)}">
-			<HintPath>${relativeDllPath}</HintPath>
-		  </Reference>`;
-
-                updatedData = updatedData.replace(
-                  dllItemGroup,
-                  `${dllItemGroup.replace(
-                    "</ItemGroup>",
-                    `${referenceXml}\n  </ItemGroup>`
-                  )}`
-                );
-              }
-            }
-
-            if (
-              !updatedData.includes(
-                '<Reference Include="' + path.basename(selectedDll) + '"'
-              )
-            ) {
-              const referenceXml = `
-	<ItemGroup>
-	  <Reference Include="${path.basename(selectedDll)}">
-		<HintPath>${relativeDllPath}</HintPath>
-	  </Reference>
-	</ItemGroup>`;
-
-              updatedData = updatedData.replace(
-                "</Project>",
-                `${referenceXml}\n</Project>`
-              );
-            }
-          });
-
-          fs.writeFile(csprojPath, updatedData, "utf8", (err) => {
-            if (err) {
-              vscode.window.showErrorMessage(
-                `Erro ao atualizar o .csproj: ${err.message}`
-              );
-              return;
-            }
-
-            vscode.window.showInformationMessage(
-              `Refer�ncias DLL adicionadas com sucesso ao ${csprojPath}`
-            );
-          });
-        });
+    fs.readFile(csprojPath, "utf8", (err, data) => {
+      if (err) {
+        vscode.window.showErrorMessage(
+          `Error reading .csproj file: ${err.message}`
+        );
+        return;
       }
+
+      let updatedData = data;
+
+      const itemGroupMatch = updatedData.match(
+        /<ItemGroup>([\s\S]*?)<\/ItemGroup>/g
+      );
+
+      let dllItemGroup = itemGroupMatch?.find((itemGroup) =>
+        itemGroup.includes("<Reference")
+      );
+
+      if (!dllItemGroup) {
+        dllItemGroup = `
+<ItemGroup>
+</ItemGroup>`;
+        updatedData = updatedData.replace(
+          "</Project>",
+          `${dllItemGroup}\n</Project>`
+        );
+      }
+
+      let referencesXml = '';
+      dllUris.forEach((dllUri) => {
+        const selectedDll = dllUri.fsPath;
+        const relativeDllPath = path.relative(cwd, selectedDll);
+
+        if (!updatedData.includes(relativeDllPath)) {
+          const referenceXml = `
+  <Reference Include="${path.basename(selectedDll)}">
+    <HintPath>${relativeDllPath}</HintPath>
+  </Reference>`;
+          
+          referencesXml += referenceXml;
+        } else {
+          vscode.window.showInformationMessage(
+            `The reference ${relativeDllPath} has already been added to ${csprojPath}`
+          );
+        }
+      });
+
+      if (referencesXml) {
+        updatedData = updatedData.replace(
+          dllItemGroup,
+          `${dllItemGroup.replace(
+            "</ItemGroup>",
+            `${referencesXml}\n  </ItemGroup>`
+          )}`
+        );
+      }
+
+      fs.writeFile(csprojPath, updatedData, "utf8", (err) => {
+        if (err) {
+          vscode.window.showErrorMessage(
+            `Error updating .csproj: ${err.message}`
+          );
+          return;
+        }
+
+        vscode.window.showInformationMessage(
+          `DLL references successfully added to ${csprojPath}`
+        );
+      });
+    });
+  }
 }
 
-export {AddDllReference};
+export { AddDllReference };
