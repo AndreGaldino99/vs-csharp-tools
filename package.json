@@ -2,6 +2,7 @@
   "name": "vs-csharp-tools",
   "displayName": "vs-csharp-tools",
   "description": "Add functions for csharp development",
+  "publisher": "AndreGaldino99",
   "author": {
     "name": "André Galdino",
     "url": "https://github.com/AndreGaldino99"
