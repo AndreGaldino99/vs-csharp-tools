@@ -25,6 +25,10 @@
       {
         "command": "vs-csharp-tools.addDllReference",
         "title": "[Ext] - Add Dll Reference"
+      },
+      {
+        "command": "vs-csharp-tools.addPackageReference",
+        "title": "[Ext] - Add Package Reference"
       }
     ],
     "menus": {
@@ -35,6 +39,10 @@
         },
         {
           "command": "vs-csharp-tools.addDllReference",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.addPackageReference",
           "group": "navigation"
         }
       ]

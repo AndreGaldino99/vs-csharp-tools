@@ -1,7 +1,7 @@
 import fs from 'fs';
 import xmlFormatter from 'xml-formatter';
 
-const FileFormatter = (filePath: string)=>{
+const XmlFileFormatter = (filePath: string)=>{
     
     fs.readFile(filePath, 'utf8', (err, data) => {
       if (err) {
@@ -26,4 +26,4 @@ const FileFormatter = (filePath: string)=>{
     });
 }
 
-export {FileFormatter};
+export {XmlFileFormatter};
