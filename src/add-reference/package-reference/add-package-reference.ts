@@ -79,30 +79,16 @@ async function AddPackageReference(uri: vscode.Uri) {
         return;
     }
 
-    const { id } = selectedPackage.data;
+    const { id, versions  } = selectedPackage.data;
 
+    let selectedPackageVersions = versions.map(x=>x.version).reverse();
     
-    const versions = await vscode.window.withProgress(
-        {
-            location: vscode.ProgressLocation.Notification,
-            title: `Fetching versions for "${id}"...`,
-            cancellable: false,
-        },
-        async (progress) => {
-            
-            progress.report({ increment: 0, message: "Loading versions..." });
-
-            const versionsResponse = await GetNugetPackages(id); 
-            return versionsResponse!.data.map(pkg => pkg.version);
-        }
-    );
-
-    if (versions.length === 0) {
+    if (selectedPackageVersions.length === 0) {
         vscode.window.showErrorMessage(`No versions found for package "${id}".`);
         return;
     }
 
-    const selectedVersion = await vscode.window.showQuickPick(versions, {
+    const selectedVersion = await vscode.window.showQuickPick(selectedPackageVersions, {
         placeHolder: `Select a version for package "${id}"`,
     });
 
