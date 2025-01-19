@@ -56,22 +56,22 @@ async function AddProjectReference(uri: vscode.Uri) {
 
     if (selectedProjects && selectedProjects.length > 0) {
         const cwd = path.dirname(currentCsprojPath);
-        
-        selectedProjects.reduce((promiseChain, selectedProject) => {
+                
+        const projectReferences = selectedProjects.map(selectedProject => {
             const relativeProjectPath = path.join(solutionDir, selectedProject);
-            const command = `dotnet add "${currentCsprojPath}" reference "${relativeProjectPath}"`;
+            return `"${relativeProjectPath}"`;
+        }).join(" ");
 
-            return promiseChain
-                .then(() => addProjectReference(command, cwd))
-                .then(() => {
-                    vscode.window.showInformationMessage(
-                        `Reference added successfully from ${relativeProjectPath} to ${currentCsprojPath}`
-                    );
-                })
-                .catch(error => {
-                    vscode.window.showErrorMessage(`Error adding reference: ${error.message}`);
-                });
-        }, Promise.resolve());
+        const command = `dotnet add "${currentCsprojPath}" reference ${projectReferences}`;
+
+        try {
+            await addProjectReference(command, cwd);
+            vscode.window.showInformationMessage(
+                `References added successfully to ${currentCsprojPath}`
+            );
+        } catch (error: any) {
+            vscode.window.showErrorMessage(`Error adding reference: ${error.message}`);
+        }
     }
 }
 
