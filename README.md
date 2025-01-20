@@ -1,71 +1,63 @@
-# vs-csharp-tools README
+# .NET IDE Extension for Visual Studio Code
 
-This is the README for your extension "vs-csharp-tools". After writing up a brief description, we recommend including the following sections.
+This Visual Studio Code extension brings essential features from a full-fledged IDE to improve the .NET development experience in VS Code. With this extension, you can easily manage NuGet packages, add references to DLLs or projects, and manipulate solutions more efficiently.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### 1. **Add NuGet Package References**
+   - Easily add NuGet packages to your .NET project directly from within VS Code.
+   - Search for available NuGet packages and add them to your project without leaving your editor.
 
-For example if there is an image subfolder under your extension project workspace:
+### 2. **Add DLL References**
+   - Add external DLL references to your project by simply selecting the DLL file.
+   - Supports referencing both local and external libraries in your .NET projects.
 
-\!\[feature X\]\(images/feature-x.png\)
+### 3. **Add Projects to Solution**
+   - Add existing .NET projects to your current solution.
+   - Automatically updates the solution file with the new project reference.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Installation
+
+1. Open Visual Studio Code.
+2. Go to the **Extensions** view by clicking the Extensions icon in the Activity Bar on the side of the window.
+3. Search for **.NET IDE Extension**.
+4. Click **Install** to add the extension to your workspace.
+
+Alternatively, you can install it via the command palette (`Ctrl+Shift+P`) by searching for "Extensions: Install Extensions" and then searching for **.NET IDE Extension**.
+
+## Usage
+
+### Add NuGet Package
+1. Open the command palette (`Ctrl+Shift+P`).
+2. Type `Add NuGet Package`.
+3. Search for the desired package by name and select it.
+4. The package will be added to your project, and the project file will be automatically updated.
+
+### Add DLL Reference
+1. Open the command palette (`Ctrl+Shift+P`).
+2. Type `Add DLL Reference`.
+3. Browse to the location of the DLL file and select it.
+4. The reference will be added to your project, and the project file will be updated.
+
+### Add Project to Solution
+1. Open the command palette (`Ctrl+Shift+P`).
+2. Type `Add Project to Solution`.
+3. Select the existing project you want to add to the current solution.
+4. The solution file will be updated to include the new project.
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Visual Studio Code
+- .NET SDK (make sure you have the .NET SDK installed for project management and NuGet integration)
 
-## Extension Settings
+## Contributing
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+Feel free to contribute to the extension by submitting issues and pull requests. If you'd like to add new features or improve the functionality, we welcome your contributions!
 
-For example:
+## License
 
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Enhance your .NET development experience in VS Code and make project management seamless with the .NET IDE Extension. Happy coding!

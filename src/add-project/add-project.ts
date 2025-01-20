@@ -13,7 +13,7 @@ async function getDotnetTemplates(): Promise<string[][]> {
         if (stderr) {
             throw new Error(stderr);
         }
-        
+       
         const templates = parseDotnetNewList(stdout);
         templates.splice(0,2);
         
@@ -76,7 +76,7 @@ async function AddNewProjectToSolution() {
             return;
         }
         
-        var list = templates.map(x => ({
+        let list = templates.map(x => ({
             label: x[0],
             description: x[1],
             detail: x[3],
