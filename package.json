@@ -33,6 +33,34 @@
       {
         "command": "vs-csharp-tools.addNewProjectToSolution",
         "title": "[Ext] - Add Project"
+      },
+      {
+        "command": "vs-csharp-tools.buildProject",
+        "title": "[Ext] - Build Project"
+      },
+      {
+        "command": "vs-csharp-tools.rebuildProject",
+        "title": "[Ext] - Rebuild Project"
+      },
+      {
+        "command": "vs-csharp-tools.cleanProject",
+        "title": "[Ext] - Clean Project"
+      },
+      {
+        "command": "vs-csharp-tools.publishProject",
+        "title": "[Ext] - Publish"
+      },
+      {
+        "command": "vs-csharp-tools.buildSolution",
+        "title": "[Ext] - Build Solution"
+      },
+      {
+        "command": "vs-csharp-tools.rebuildSolution",
+        "title": "[Ext] - Rebuild Solution"
+      },
+      {
+        "command": "vs-csharp-tools.cleanSolution",
+        "title": "[Ext] - Clean Solution"
       }
     ],
     "menus": {
@@ -54,6 +82,41 @@
         },
         {
           "command": "vs-csharp-tools.addNewProjectToSolution",
+          "when": "resourceExtname == .sln",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.buildProject",
+          "when": "resourceExtname == .csproj",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.rebuildProject",
+          "when": "resourceExtname == .csproj",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.cleanProject",
+          "when": "resourceExtname == .csproj",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.publishProject",
+          "when": "resourceExtname == .csproj",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.buildSolution",
+          "when": "resourceExtname == .sln",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.rebuildSolution",
+          "when": "resourceExtname == .sln",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.cleanSolution",
           "when": "resourceExtname == .sln",
           "group": "navigation"
         }
