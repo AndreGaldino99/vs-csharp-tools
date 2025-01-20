@@ -29,20 +29,32 @@
       {
         "command": "vs-csharp-tools.addPackageReference",
         "title": "[Ext] - Add Package Reference"
+      },
+      {
+        "command": "vs-csharp-tools.addNewProjectToSolution",
+        "title": "[Ext] - Add Project"
       }
     ],
     "menus": {
       "explorer/context": [
         {
           "command": "vs-csharp-tools.addProjectReference",
+          "when": "resourceExtname == .csproj",
           "group": "navigation"
         },
         {
           "command": "vs-csharp-tools.addDllReference",
+          "when": "resourceExtname == .csproj",
           "group": "navigation"
         },
         {
           "command": "vs-csharp-tools.addPackageReference",
+          "when": "resourceExtname == .csproj",
+          "group": "navigation"
+        },
+        {
+          "command": "vs-csharp-tools.addNewProjectToSolution",
+          "when": "resourceExtname == .sln",
           "group": "navigation"
         }
       ]
