@@ -1,6 +1,8 @@
+import * as fs from "fs/promises";
 import * as path from "path";
 import * as vscode from "vscode";
-import * as fs from "fs/promises";
+
+import { CustomOutputChannel } from "../../tools/output-channel";
 import { exec } from "child_process";
 import { promisify } from "util";
 
@@ -31,21 +33,21 @@ async function addProjectReference(command: string, cwd: string): Promise<void> 
 async function AddProjectReference(uri: vscode.Uri) {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
-        vscode.window.showErrorMessage("No workspace folder open.");
+        CustomOutputChannel.appendLine("No workspace folder open.");
         return;
     }
-
+    
     const solutionDir = workspaceFolders[0].uri.fsPath;
     const csprojFiles = await findCsprojFiles(solutionDir);
-
+    
     if (csprojFiles.length === 0) {
-        vscode.window.showErrorMessage("No .csproj files found in the workspace.");
+        CustomOutputChannel.appendLine("No .csproj files found in the workspace.");
         return;
     }
-
+    
     const currentCsprojPath = uri.fsPath;
     const filteredCsprojFiles = csprojFiles.filter(file => file !== currentCsprojPath);
-
+    
     const selectedProjects = await vscode.window.showQuickPick(
         filteredCsprojFiles.map(file => path.relative(solutionDir, file)),
         {
@@ -53,24 +55,24 @@ async function AddProjectReference(uri: vscode.Uri) {
             placeHolder: "Select one or more projects to add as reference"
         }
     );
-
+    
     if (selectedProjects && selectedProjects.length > 0) {
         const cwd = path.dirname(currentCsprojPath);
-                
+        
         const projectReferences = selectedProjects.map(selectedProject => {
             const relativeProjectPath = path.join(solutionDir, selectedProject);
             return `"${relativeProjectPath}"`;
         }).join(" ");
-
+        
         const command = `dotnet add "${currentCsprojPath}" reference ${projectReferences}`;
-
+        
         try {
             await addProjectReference(command, cwd);
-            vscode.window.showInformationMessage(
+            CustomOutputChannel.appendLine(
                 `References added successfully to ${currentCsprojPath}`
             );
         } catch (error: any) {
-            vscode.window.showErrorMessage(`Error adding reference: ${error.message}`);
+            CustomOutputChannel.appendLine(`Error adding reference: ${error.message}`);
         }
     }
 }

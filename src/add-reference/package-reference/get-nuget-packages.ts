@@ -1,11 +1,14 @@
-import { NugetPackagesType } from "./types";
 import * as vscode from "vscode";
+
+import { CustomOutputChannel } from "../../tools/output-channel";
+import { NugetPackagesType } from "./types";
+import { error } from "console";
 
 async function GetNugetPackages(q: string): Promise<NugetPackagesType | null> {
     if(q.length < 3)
         {
-        vscode.window.showErrorMessage("Enter at least 3 characters to search.");
-        throw "Enter at least 3 characters to search";
+        CustomOutputChannel.appendLine("Enter at least 3 characters to search.");
+        throw error("Enter at least 3 characters to search");
     }
     
     const url = `https://api-v2v3search-0.nuget.org/query?q=${encodeURIComponent(q)}&prerelease=true`;

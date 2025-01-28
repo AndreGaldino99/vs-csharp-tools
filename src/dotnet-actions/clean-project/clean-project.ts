@@ -1,19 +1,20 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
+import { CustomOutputChannel } from "../../tools/output-channel";
 import { exec } from "child_process";
 
 async function cleanProject(command: string, cwd: string): Promise<void> {
     const childProcess = exec(command, { cwd });
-
+    
     childProcess.stdout?.on("data", (data) => {
-        vscode.window.showInformationMessage(data.toString());
+        CustomOutputChannel.appendLine(data.toString());
     });
-
+    
     childProcess.stderr?.on("data", (data) => {
-        console.error(data.toString());
+        CustomOutputChannel.appendLine(`Error: ${data.toString()}`);
     });
-
+    
     return new Promise((resolve, reject) => {
         childProcess.on("close", (code) => {
             if (code !== 0) {
@@ -32,9 +33,9 @@ async function CleanProject(uri: vscode.Uri) {
     
     try {
         await cleanProject(command, cwd);
-        vscode.window.showInformationMessage("Clean completed successfully!");
+        CustomOutputChannel.appendLine("Clean completed successfully!");
     } catch (error: any) {
-        vscode.window.showErrorMessage(`Error cleaning project: ${error.message}`);
+        CustomOutputChannel.appendLine(`Error cleaning project: ${error.message}`);
     }
 }
 

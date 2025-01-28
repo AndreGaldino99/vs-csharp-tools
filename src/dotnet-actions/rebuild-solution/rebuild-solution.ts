@@ -1,17 +1,18 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
+import { CustomOutputChannel } from "../../tools/output-channel";
 import { exec } from "child_process";
 
 async function rebuildSolution(command: string, cwd: string): Promise<void> {
     const childProcess = exec(command, { cwd });
 
     childProcess.stdout?.on("data", (data) => {
-        vscode.window.showInformationMessage(data.toString());
+        CustomOutputChannel.appendLine(data.toString());
     });
 
     childProcess.stderr?.on("data", (data) => {
-        vscode.window.showErrorMessage(data.toString());
+        CustomOutputChannel.appendLine(data.toString());
     });
 
     return new Promise((resolve, reject) => {
@@ -38,9 +39,9 @@ async function RebuildSolution(uri: vscode.Uri) {
         await rebuildSolution(cleanCommand, cwd);
         await rebuildSolution(buildCommand, cwd);
 
-        vscode.window.showInformationMessage("Build completed successfully!");
+        CustomOutputChannel.appendLine("Build completed successfully!");
     } catch (error: any) {
-        vscode.window.showErrorMessage(`Error building Solution: ${error.message}`);
+        CustomOutputChannel.appendLine(`Error building Solution: ${error.message}`);
     }
 }
 

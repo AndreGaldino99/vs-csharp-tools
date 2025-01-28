@@ -2,6 +2,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import * as vscode from "vscode";
 
+import { CustomOutputChannel } from "../tools/output-channel";
 import { exec } from "child_process";
 import { promisify } from "util";
 
@@ -30,7 +31,7 @@ async function createNewProject(template: string, solutionDir: string): Promise<
     });
     
     if (!projectName) {
-        vscode.window.showErrorMessage("Project name is required.");
+        CustomOutputChannel.appendLine("Project name is required.");
         return;
     }
     
@@ -39,18 +40,18 @@ async function createNewProject(template: string, solutionDir: string): Promise<
     
     try {
         await execAsync(command);
-        vscode.window.showInformationMessage(`Project '${projectName}' created successfully!`);
+        CustomOutputChannel.appendLine(`Project '${projectName}' created successfully!`);
         
         
         const solutionFile = await findSolutionFile(solutionDir);
         if (solutionFile) {
             await execAsync(`dotnet sln "${solutionFile}" add "${projectDir}/${projectName}.csproj"`);
-            vscode.window.showInformationMessage(`Project '${projectName}' added to solution.`);
+            CustomOutputChannel.appendLine(`Project '${projectName}' added to solution.`);
         } else {
-            vscode.window.showErrorMessage("Solution file (.sln) not found in the workspace.");
+            CustomOutputChannel.appendLine("Solution file (.sln) not found in the workspace.");
         }
     } catch (error: any) {
-        vscode.window.showErrorMessage(`Error creating project: ${error.message}`);
+        CustomOutputChannel.appendLine(`Error creating project: ${error.message}`);
     }
 }
 
@@ -63,7 +64,7 @@ async function findSolutionFile(dir: string): Promise<string | null> {
 async function AddNewProjectToSolution() {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
-        vscode.window.showErrorMessage("No workspace folder open.");
+        CustomOutputChannel.appendLine("No workspace folder open.");
         return;
     }
     
@@ -72,7 +73,7 @@ async function AddNewProjectToSolution() {
     try {
         const templates = await getDotnetTemplates();
         if (templates.length === 0) {
-            vscode.window.showErrorMessage("No templates found.");
+            CustomOutputChannel.appendLine("No templates found.");
             return;
         }
         
@@ -91,7 +92,7 @@ async function AddNewProjectToSolution() {
             await createNewProject(selectedTemplate.description, solutionDir);
         }
     } catch (error: any) {
-        vscode.window.showErrorMessage(`Error: ${error.message}`);
+        CustomOutputChannel.appendLine(`Error: ${error.message}`);
     }
 }
 

@@ -1,13 +1,14 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
+import { CustomOutputChannel } from "../../tools/output-channel";
 import { exec } from "child_process";
 
 async function buildSolution(command: string, cwd: string): Promise<void> {
     const childProcess = exec(command, { cwd });
 
     childProcess.stdout?.on("data", (data) => {
-        vscode.window.showInformationMessage(data.toString());
+        CustomOutputChannel.appendLine(data.toString());
     });
 
     childProcess.stderr?.on("data", (data) => {
@@ -32,9 +33,9 @@ async function BuildSolution(uri: vscode.Uri) {
     
     try {
         await buildSolution(command, cwd);
-        vscode.window.showInformationMessage("Build completed successfully!");
+        CustomOutputChannel.appendLine("Build completed successfully!");
     } catch (error: any) {
-        vscode.window.showErrorMessage(`Error building solution: ${error.message}`);
+        CustomOutputChannel.appendLine(`Error building solution: ${error.message}`);
     }
 }
 

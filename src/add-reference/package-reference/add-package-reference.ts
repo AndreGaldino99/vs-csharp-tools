@@ -1,9 +1,11 @@
+import * as fs from "fs/promises";
 import * as path from "path";
 import * as vscode from "vscode";
-import * as fs from "fs/promises";
+
+import { CustomOutputChannel } from "../../tools/output-channel";
+import { GetNugetPackages } from "./get-nuget-packages";
 import { exec } from "child_process";
 import { promisify } from "util";
-import { GetNugetPackages } from "./get-nuget-packages";  
 
 const execAsync = promisify(exec);
 
@@ -32,7 +34,7 @@ async function installNugetPackage(command: string, cwd: string): Promise<void> 
 async function AddPackageReference(uri: vscode.Uri) {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
-        vscode.window.showErrorMessage("No workspace folder open.");
+        CustomOutputChannel.appendLine("No workspace folder open.");
         return;
     }
 
@@ -40,7 +42,7 @@ async function AddPackageReference(uri: vscode.Uri) {
     const csprojFiles = await findCsprojFiles(solutionDir);
 
     if (csprojFiles.length === 0) {
-        vscode.window.showErrorMessage("No .csproj files found in the workspace.");
+        CustomOutputChannel.appendLine("No .csproj files found in the workspace.");
         return;
     }
 
@@ -52,13 +54,13 @@ async function AddPackageReference(uri: vscode.Uri) {
     });
 
     if (!packageName) {
-        vscode.window.showErrorMessage("Package name is required.");
+        CustomOutputChannel.appendLine("Package name is required.");
         return;
     }
 
     const nugetPackages = await GetNugetPackages(packageName);
     if (!nugetPackages || nugetPackages.totalHits === 0) {
-        vscode.window.showErrorMessage(`No NuGet packages found for "${packageName}".`);
+        CustomOutputChannel.appendLine(`No NuGet packages found for "${packageName}".`);
         return;
     }
     
@@ -75,7 +77,7 @@ async function AddPackageReference(uri: vscode.Uri) {
     );
 
     if (!selectedPackage) {
-        vscode.window.showErrorMessage("No package selected.");
+        CustomOutputChannel.appendLine("No package selected.");
         return;
     }
 
@@ -84,7 +86,7 @@ async function AddPackageReference(uri: vscode.Uri) {
     let selectedPackageVersions = versions.map(x=>x.version).reverse();
     
     if (selectedPackageVersions.length === 0) {
-        vscode.window.showErrorMessage(`No versions found for package "${id}".`);
+        CustomOutputChannel.appendLine(`No versions found for package "${id}".`);
         return;
     }
 
@@ -93,7 +95,7 @@ async function AddPackageReference(uri: vscode.Uri) {
     });
 
     if (!selectedVersion) {
-        vscode.window.showErrorMessage("No version selected.");
+        CustomOutputChannel.appendLine("No version selected.");
         return;
     }
 
@@ -111,9 +113,9 @@ async function AddPackageReference(uri: vscode.Uri) {
             
             try {
                 await installNugetPackage(command, cwd);
-                vscode.window.showInformationMessage(`Package "${id} ${selectedVersion}" installed successfully.`);
+                CustomOutputChannel.appendLine(`Package "${id} ${selectedVersion}" installed successfully.`);
             } catch (error: any) {
-                vscode.window.showErrorMessage(`Error installing package: ${error.message}`);
+                CustomOutputChannel.appendLine(`Error installing package: ${error.message}`);
             }
         }
     );

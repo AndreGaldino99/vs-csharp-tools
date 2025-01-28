@@ -32,7 +32,7 @@
       },
       {
         "command": "vs-csharp-tools.addNewProjectToSolution",
-        "title": "[Ext] - Add Project"
+        "title": "[Ext] - Add New Project to Solution"
       },
       {
         "command": "vs-csharp-tools.buildProject",
@@ -66,62 +66,86 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "vs-csharp-tools.addProjectReference",
+          "submenu": "addReferenceMenu",
           "when": "resourceExtname == .csproj",
+          "group": "navigation"
+        },
+        {
+          "submenu": "dotnetProjectActions",
+          "when": "resourceExtname == .csproj",
+          "group": "navigation"
+        },
+        {
+          "submenu": "dotnetSolutionActions",
+          "when": "resourceExtname == .sln",
+          "group": "navigation"
+        }
+      ],
+      "addReferenceMenu": [
+        {
+          "command": "vs-csharp-tools.addProjectReference",
           "group": "navigation"
         },
         {
           "command": "vs-csharp-tools.addDllReference",
-          "when": "resourceExtname == .csproj",
           "group": "navigation"
         },
         {
           "command": "vs-csharp-tools.addPackageReference",
-          "when": "resourceExtname == .csproj",
           "group": "navigation"
-        },
-        {
-          "command": "vs-csharp-tools.addNewProjectToSolution",
-          "when": "resourceExtname == .sln",
-          "group": "navigation"
-        },
+        }
+      ],
+      "dotnetProjectActions": [
         {
           "command": "vs-csharp-tools.buildProject",
-          "when": "resourceExtname == .csproj",
-          "group": "navigation"
+          "group": "projectActions"
         },
         {
           "command": "vs-csharp-tools.rebuildProject",
-          "when": "resourceExtname == .csproj",
-          "group": "navigation"
+          "group": "projectActions"
         },
         {
           "command": "vs-csharp-tools.cleanProject",
-          "when": "resourceExtname == .csproj",
-          "group": "navigation"
+          "group": "projectActions"
         },
         {
           "command": "vs-csharp-tools.publishProject",
-          "when": "resourceExtname == .csproj",
-          "group": "navigation"
-        },
+          "group": "publishProject"
+        }
+      ],
+      "dotnetSolutionActions": [
         {
           "command": "vs-csharp-tools.buildSolution",
-          "when": "resourceExtname == .sln",
-          "group": "navigation"
+          "group": "solutionActions"
         },
         {
           "command": "vs-csharp-tools.rebuildSolution",
-          "when": "resourceExtname == .sln",
-          "group": "navigation"
+          "group": "solutionActions"
         },
         {
           "command": "vs-csharp-tools.cleanSolution",
-          "when": "resourceExtname == .sln",
-          "group": "navigation"
+          "group": "solutionActions"
+        },
+        {
+          "command": "vs-csharp-tools.addNewProjectToSolution",
+          "group": "newProjectToSolution"
         }
       ]
-    }
+    },
+    "submenus": [
+      {
+        "id": "addReferenceMenu",
+        "label": "Add Reference"
+      },
+      {
+        "id": "dotnetProjectActions",
+        "label": "Project Actions"
+      },
+      {
+        "id": "dotnetSolutionActions",
+        "label": "Solution Actions"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

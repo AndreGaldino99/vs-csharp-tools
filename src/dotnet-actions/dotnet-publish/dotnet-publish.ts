@@ -1,13 +1,14 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
+import { CustomOutputChannel } from "../../tools/output-channel";
 import { exec } from "child_process";
 
 async function publishProject(command: string, cwd: string): Promise<void> {
     const childProcess = exec(command, { cwd });
 
     childProcess.stdout?.on("data", (data) => {
-        vscode.window.showInformationMessage(data.toString());
+        CustomOutputChannel.appendLine(data.toString());
     });
 
     childProcess.stderr?.on("data", (data) => {
@@ -36,7 +37,7 @@ async function PublishProject(uri: vscode.Uri) {
     });
 
     if (!folderUri || folderUri.length === 0) {
-        vscode.window.showErrorMessage("No folder selected. Publish canceled.");
+        CustomOutputChannel.appendLine("No folder selected. Publish canceled.");
         return;
     }
 
@@ -46,9 +47,9 @@ async function PublishProject(uri: vscode.Uri) {
 
     try {
         await publishProject(command, cwd);
-        vscode.window.showInformationMessage("Publish completed successfully!");
+        CustomOutputChannel.appendLine("Publish completed successfully!");
     } catch (error: any) {
-        vscode.window.showErrorMessage(`Error publishing project: ${error.message}`);
+        CustomOutputChannel.appendLine(`Error publishing project: ${error.message}`);
     }
 }
 

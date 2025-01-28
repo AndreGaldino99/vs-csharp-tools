@@ -2,6 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
+import { CustomOutputChannel } from "../../tools/output-channel";
+
 async function AddDllReference(uri: vscode.Uri) {
   const dllUris = await vscode.window.showOpenDialog({
     canSelectFiles: true,
@@ -17,7 +19,7 @@ async function AddDllReference(uri: vscode.Uri) {
 
     fs.readFile(csprojPath, "utf8", (err, data) => {
       if (err) {
-        vscode.window.showErrorMessage(
+        CustomOutputChannel.appendLine(
           `Error reading .csproj file: ${err.message}`
         );
         return;
@@ -56,7 +58,7 @@ async function AddDllReference(uri: vscode.Uri) {
           
           referencesXml += referenceXml;
         } else {
-          vscode.window.showInformationMessage(
+          CustomOutputChannel.appendLine(
             `The reference ${relativeDllPath} has already been added to ${csprojPath}`
           );
         }
@@ -74,13 +76,13 @@ async function AddDllReference(uri: vscode.Uri) {
 
       fs.writeFile(csprojPath, updatedData, "utf8", (err) => {
         if (err) {
-          vscode.window.showErrorMessage(
+          CustomOutputChannel.appendLine(
             `Error updating .csproj: ${err.message}`
           );
           return;
         }
 
-        vscode.window.showInformationMessage(
+        CustomOutputChannel.appendLine(
           `DLL references successfully added to ${csprojPath}`
         );
       });
