@@ -3,9 +3,14 @@
   "displayName": "vs-csharp-tools",
   "description": "Add functions for csharp development",
   "publisher": "AndreGaldino99",
+  "icon": "images/icon.png",
   "author": {
     "name": "André Galdino",
     "url": "https://github.com/AndreGaldino99"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndreGaldino99/vs-csharp-tools.git"
   },
   "version": "0.0.1",
   "engines": {
