@@ -29,20 +29,31 @@ async function rebuildSolution(command: string, cwd: string): Promise<void> {
 async function RebuildSolution(uri: vscode.Uri) {
     const currentSlnPath = uri.fsPath;
     const cwd = path.dirname(currentSlnPath);
-
     const cleanCommand = `dotnet clean "${currentSlnPath}"`;
-
     const buildCommand = `dotnet build "${currentSlnPath}"`;
 
-    try {
-        
-        await rebuildSolution(cleanCommand, cwd);
-        await rebuildSolution(buildCommand, cwd);
+    await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Window,
+            title: "Rebuilding Solution...",
+            cancellable: false,
+        },
+        async (progress) => {
+            try {
+                progress.report({ message: "Cleaning solution..." });
+                await rebuildSolution(cleanCommand, cwd);
 
-        CustomOutputChannel.appendLine("Build completed successfully!");
-    } catch (error: any) {
-        CustomOutputChannel.appendLine(`Error building Solution: ${error.message}`);
-    }
+                progress.report({ message: "Building solution..." });
+                await rebuildSolution(buildCommand, cwd);
+
+                CustomOutputChannel.appendLine("Build completed successfully!");
+                vscode.window.showInformationMessage("Solution rebuilt successfully!");
+            } catch (error: any) {
+                CustomOutputChannel.appendLine(`Error building Solution: ${error.message}`);
+                vscode.window.showErrorMessage("Error rebuilding solution. Check output for details.");
+            }
+        }
+    );
 }
 
 export { RebuildSolution };

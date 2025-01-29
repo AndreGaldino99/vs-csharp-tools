@@ -31,12 +31,24 @@ async function CleanProject(uri: vscode.Uri) {
     const cwd = path.dirname(currentCsprojPath);
     const command = `dotnet clean "${currentCsprojPath}"`;
     
-    try {
-        await cleanProject(command, cwd);
-        CustomOutputChannel.appendLine("Clean completed successfully!");
-    } catch (error: any) {
-        CustomOutputChannel.appendLine(`Error cleaning project: ${error.message}`);
-    }
+    await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Window,
+            title: "Cleaning project...",
+            cancellable: false,
+        },
+        async (progress) => {
+            try {
+                progress.report({ message: "Cleaning project..." });
+                await cleanProject(command, cwd);
+
+                CustomOutputChannel.appendLine("Clean completed successfully!");
+                vscode.window.showInformationMessage("Clean completed successfully!");
+            } catch (error: any) {
+                CustomOutputChannel.appendLine(`Error cleaning project: ${error.message}`);
+                vscode.window.showInformationMessage(`Error cleaning project: ${error.message}`);
+            }
+        });
 }
 
 export { CleanProject };

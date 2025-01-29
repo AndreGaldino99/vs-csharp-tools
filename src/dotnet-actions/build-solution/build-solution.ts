@@ -31,12 +31,24 @@ async function BuildSolution(uri: vscode.Uri) {
     const cwd = path.dirname(currentSlnPath);
     const command = `dotnet build "${currentSlnPath}"`;
     
-    try {
-        await buildSolution(command, cwd);
-        CustomOutputChannel.appendLine("Build completed successfully!");
-    } catch (error: any) {
-        CustomOutputChannel.appendLine(`Error building solution: ${error.message}`);
-    }
+    await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Window,
+            title: "Building Solution...",
+            cancellable: false,
+        },
+        async (progress) => {
+            try {
+                progress.report({ message: "Building solution..." });
+                await buildSolution(command, cwd);
+
+                CustomOutputChannel.appendLine("Build completed successfully!");
+                vscode.window.showInformationMessage("Build completed successfully!");
+            } catch (error: any) {
+                CustomOutputChannel.appendLine(`Error building solution: ${error.message}`);
+                vscode.window.showInformationMessage(`Error building solution: ${error.message}`);
+            }
+        });
 }
 
 export { BuildSolution };

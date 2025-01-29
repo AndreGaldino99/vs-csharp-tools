@@ -8,7 +8,7 @@ async function GetNugetPackages(q: string): Promise<NugetPackagesType | null> {
     if(q.length < 3)
         {
         CustomOutputChannel.appendLine("Enter at least 3 characters to search.");
-        throw error("Enter at least 3 characters to search");
+        vscode.window.showInformationMessage("Enter at least 3 characters to search");
     }
     
     const url = `https://api-v2v3search-0.nuget.org/query?q=${encodeURIComponent(q)}&prerelease=true`;

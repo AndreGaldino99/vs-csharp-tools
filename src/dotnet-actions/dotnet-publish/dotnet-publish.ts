@@ -45,12 +45,24 @@ async function PublishProject(uri: vscode.Uri) {
 
     const command = `dotnet publish "${currentCsprojPath}" -o "${destinationFolder}"`;
 
-    try {
-        await publishProject(command, cwd);
-        CustomOutputChannel.appendLine("Publish completed successfully!");
-    } catch (error: any) {
-        CustomOutputChannel.appendLine(`Error publishing project: ${error.message}`);
-    }
+    await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Window,
+            title: "Publishing Solution...",
+            cancellable: false,
+        },
+        async (progress) => {
+            try {
+                progress.report({ message: "Publishing project..." });
+                await publishProject(command, cwd);
+
+                CustomOutputChannel.appendLine("Publish completed successfully!");
+                vscode.window.showInformationMessage("Publish completed successfully!");
+            } catch (error: any) {
+                CustomOutputChannel.appendLine(`Error publishing project: ${error.message}`);
+                vscode.window.showInformationMessage(`Error publishing project: ${error.message}`);
+            }
+        });
 }
 
 export { PublishProject };
