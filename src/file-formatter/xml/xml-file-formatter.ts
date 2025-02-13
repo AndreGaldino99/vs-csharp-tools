@@ -24,6 +24,6 @@ const XmlFileFormatter = (filePath: string)=>{
         console.log('.csproj file formatted successfully!');
       });
     });
-}
+};
 
 export {XmlFileFormatter};
